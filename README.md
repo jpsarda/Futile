@@ -1,4 +1,4 @@
-#Futile (0.91.1 Beta)
+#Extensions to Futile (based on development branch of Futile)
 
 ##Futile Extensions Demo Go to http://bonuslevel.org/experiments/futiletests/futiletests.html
 
