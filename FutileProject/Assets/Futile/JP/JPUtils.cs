@@ -175,6 +175,7 @@ public static class FutileUtils
 
 public static class CodeUtils
 {
+	//Convert string to enum value
 	public static T ParseEnum<T>( string value )
 	{
 	    return (T) Enum.Parse( typeof( T ), value, true );
@@ -182,6 +183,94 @@ public static class CodeUtils
 }
 
 
+public static class LabelUtils
+{
+	public static void ScaleMaxWidth(FLabel label,float maxScale,float maxWidth) 
+	{
+		label.scale=maxScale;
+		float currentWidth=label.textRect.width*label.scaleX;
+		if (currentWidth>maxWidth) {
+			label.scale=maxWidth/label.textRect.width;
+		}
+	}
+}
+
+public enum NodeAlign {
+	CENTER,
+	LEFT,
+	RIGHT,
+	TOP,
+	BOTTOM,
+	TOPLEFT,
+	TOPRIGHT,
+	BOTTOMLEFT,
+	BOTTOMRIGHT,
+	NONE,
+}
+
+public static class SpriteUtils
+{
+	public static void Fit(FSprite sprite,Rect rect,NodeAlign align=NodeAlign.CENTER) 
+	{
+		sprite.scale = Mathf.Min(sprite.textureRect.height/rect.height,sprite.textureRect.width/rect.width);
+		Align(sprite,rect,align);
+	}
+	
+	public static void Fill(FSprite sprite,Rect rect,NodeAlign align=NodeAlign.CENTER) 
+	{
+		sprite.scale = Mathf.Max(sprite.textureRect.height/rect.height,sprite.textureRect.width/rect.width);
+		Align(sprite,rect,align);
+	}
+	
+	public static void Align(FSprite sprite,Rect rect,NodeAlign align) {
+		switch(align) {
+			case NodeAlign.CENTER: {
+				sprite.SetPosition(rect.center);
+				break;	
+			}
+			case NodeAlign.LEFT: {
+				sprite.y=rect.center.y;
+				sprite.x=rect.xMin+sprite.textureRect.width*sprite.scaleX*0.5f;
+				break;	
+			}
+			case NodeAlign.RIGHT: {
+				sprite.y=rect.center.y;
+				sprite.x=rect.xMax-sprite.textureRect.width*sprite.scaleX*0.5f;
+				break;	
+			}
+			case NodeAlign.TOP: {
+				sprite.x=rect.center.x;
+				sprite.y=rect.yMax-sprite.textureRect.height*sprite.scaleY*0.5f;
+				break;	
+			}
+			case NodeAlign.BOTTOM: {
+				sprite.x=rect.center.x;
+				sprite.y=rect.yMin+sprite.textureRect.height*sprite.scaleY*0.5f;
+				break;	
+			}
+			case NodeAlign.TOPLEFT: {
+				sprite.x=rect.xMin+sprite.textureRect.width*sprite.scaleX*0.5f;
+				sprite.y=rect.yMax-sprite.textureRect.height*sprite.scaleY*0.5f;
+				break;	
+			}
+			case NodeAlign.TOPRIGHT: {
+				sprite.x=rect.xMax-sprite.textureRect.width*sprite.scaleX*0.5f;
+				sprite.y=rect.yMax-sprite.textureRect.height*sprite.scaleY*0.5f;
+				break;	
+			}
+			case NodeAlign.BOTTOMLEFT: {
+				sprite.x=rect.xMin+sprite.textureRect.width*sprite.scaleX*0.5f;
+				sprite.y=rect.yMin+sprite.textureRect.height*sprite.scaleY*0.5f;
+				break;	
+			}
+			case NodeAlign.BOTTOMRIGHT: {
+				sprite.x=rect.xMax-sprite.textureRect.width*sprite.scaleX*0.5f;
+				sprite.y=rect.yMin+sprite.textureRect.height*sprite.scaleY*0.5f;
+				break;	
+			}
+		}
+	}
+}
 
 
 public static class FileUtils

@@ -16,9 +16,11 @@ public class FSpeechBubble : FContainer
 	protected float _pointerMargin=10f;
 	
 	//draw
-	//protected Color _borderColor=Color.white;
+	//protected Color _borderColor=Color.white; //TODO
 	protected WTPolygonSprite _polygonSprite;
 	protected FDrawingSprite _borderSprite=null;
+	
+	public FNodeFollower nodeFollower=null; // to make it follow a node
 	
 	public FSpeechBubble ()
 	{
@@ -58,7 +60,7 @@ public class FSpeechBubble : FContainer
 		bool outside=true;
 		if ((_point.x-_pointerMargin<=halfWidth)&&(_point.x+_pointerMargin>=-halfWidth)) {
 			if ((_point.y-_pointerMargin<=halfHeight)&&(_point.y+_pointerMargin>=-halfHeight)) {
-				Debug.LogWarning("FSpeechBubble, the point is inisde the bubble, not supported.");
+				Debug.LogWarning("FSpeechBubble, the point is inisde the bubble.");
 				outside=false;
 				//return;
 			}
@@ -268,19 +270,12 @@ public class FSpeechBubble : FContainer
 			
 			Vector2 point0=foundIntersection-orth*_pointerBaseSize*0.5f;
 			Vector2 point1=foundIntersection+orth*_pointerBaseSize*0.5f;
-			/*
-			Vector2 diff0=point0-_point;
-			point0=_point+diff0+(diff0.normalized*_pointerBaseSize*2);
-			Vector2 diff1=point1-_point;
-			point1=_point+diff1+(diff1.normalized*_pointerBaseSize*2);
-			*/
-			
+
 			//Take into acount the pointerMargin
 			Vector2 correctedPoint=_point+dir*_pointerMargin;
 			
 
 			//find intersections with point0 and point1
-			
 			Vector2 foundIntersection0;
 			int foundPathIdx0;
 			int foundSegmentLowerIdx0;
@@ -364,5 +359,3 @@ public class FSpeechBubble : FContainer
 		_cornerSegmentsCount=(int)(_cornerRadius/2); if (_cornerSegmentsCount<4) _cornerSegmentsCount=4;
 	}
 }
-
-

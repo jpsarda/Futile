@@ -44,10 +44,10 @@ public class PageTestBicolorSprite : PageTest, FMultiTouchableInterface
 	}
 	
 	protected void Click(Vector2 touch) {
-	    TweenConfig config;
+	    GoTweenConfig config;
 		//config=new TweenConfig().colorProp("bottomColor",RandomUtils.RandomColor()).colorProp("topColor",RandomUtils.RandomColor());
 	    //Go.to (_bicolorSprite0,0.25f,config);
-		config=new TweenConfig().colorProp("bottomColor",RandomUtils.RandomColor()).colorProp("topColor",RandomUtils.RandomColor());
+		config=new GoTweenConfig().colorProp("bottomColor",RandomUtils.RandomColor()).colorProp("topColor",RandomUtils.RandomColor());
 	    Go.to (_bicolorSprite1,0.25f,config);
 	}
 

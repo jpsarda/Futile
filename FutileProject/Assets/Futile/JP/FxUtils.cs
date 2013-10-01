@@ -51,7 +51,7 @@ public class FxUtils {
 }
 
 public class FlashUtil {
-	static Dictionary<FNode, Tween> tweens = new Dictionary<FNode, Tween>();
+	static Dictionary<FNode, GoTween> tweens = new Dictionary<FNode, GoTween>();
 	
 	public FlashUtil () {
 	}
@@ -60,18 +60,18 @@ public class FlashUtil {
 		Cancel (sprite);
 		sprite.shader=FShader.AdditiveColor;
 		sprite.color=Futile.white;
-		TweenConfig config0=new TweenConfig().colorProp("color",new Color(0f,0f,0f)).onComplete(HandleFlashDone);
-		config0.setEaseType(EaseType.ExpoOut);
+		GoTweenConfig config0=new GoTweenConfig().colorProp("color",new Color(0f,0f,0f)).onComplete(HandleFlashDone);
+		config0.setEaseType(GoEaseType.ExpoOut);
 		tweens.Add(sprite,Go.to (sprite, 0.5f, config0));
 	}
-	protected void HandleFlashDone(AbstractTween tween) {
-		FSprite sprite=(FSprite)(((Tween)tween).target);
+	protected void HandleFlashDone(AbstractGoTween tween) {
+		FSprite sprite=(FSprite)(((GoTween)tween).target);
 		tweens.Remove(sprite);
 		sprite.shader=FShader.Basic;
 		sprite.color=Futile.white;
 	}
 	static public void Cancel (FSprite sprite) {
-		Tween tween=null;
+		GoTween tween=null;
 		tweens.TryGetValue(sprite, out tween);
 		if (tween!=null) {
 			tween.destroy();
@@ -86,7 +86,7 @@ public class OscilUtil {
 	static Dictionary<FNode, OscilUtil> pendings = new Dictionary<FNode, OscilUtil>();
 	
 	public Vector2 memoPos;
-	public TweenChain chain=null;
+	public GoTweenChain chain=null;
 
 	public OscilUtil () {
 	}
@@ -94,16 +94,16 @@ public class OscilUtil {
 	public void go(FNode node, float period, float ampX, float ampY) {
 		Cancel (node);
 		
-		chain = new TweenChain();
-		chain.setIterations( -1, LoopType.PingPong );
-		TweenConfig config0=new TweenConfig();
+		chain = new GoTweenChain(new GoTweenCollectionConfig().setIterations(-1,GoLoopType.PingPong));
+		//chain.setIterations( -1, LoopType.PingPong );
+		GoTweenConfig config0=new GoTweenConfig();
 		
 		if (ampX!=0) config0.floatProp( "x", node.x+ampX );
 		if (ampY!=0) config0.floatProp( "y", node.y+ampY );
 		
-		config0.setEaseType(EaseType.SineInOut);
+		config0.setEaseType(GoEaseType.SineInOut);
 		
-		chain.append( new Tween( node, period, config0 ) );
+		chain.append( new GoTween( node, period, config0 ) );
 		chain.play();
 		
 		pendings.Add(node,this);
@@ -126,7 +126,7 @@ public class OscilScaleUtil {
 	static Dictionary<FNode, OscilScaleUtil> pendings = new Dictionary<FNode, OscilScaleUtil>();
 	
 	public float memoScaleX,memoScaleY;
-	public TweenChain chain=null;
+	public GoTweenChain chain=null;
 
 	public OscilScaleUtil () {
 	}
@@ -134,16 +134,16 @@ public class OscilScaleUtil {
 	public void go(FNode node, float period, float scaleX, float scaleY) {
 		Cancel (node);
 		
-		chain = new TweenChain();
-		chain.setIterations( -1, LoopType.PingPong );
-		TweenConfig config0=new TweenConfig();
+		chain = new GoTweenChain(new GoTweenCollectionConfig().setIterations(-1,GoLoopType.PingPong));
+		//chain.setIterations( -1, LoopType.PingPong );
+		GoTweenConfig config0=new GoTweenConfig();
 		
 		if (scaleX!=node.scaleX) config0.floatProp( "scaleX", scaleX );
 		if (scaleY!=node.scaleY) config0.floatProp( "scaleY", scaleY );
 		
-		config0.setEaseType(EaseType.SineInOut);
+		config0.setEaseType(GoEaseType.SineInOut);
 		
-		chain.append( new Tween( node, period, config0 ) );
+		chain.append( new GoTween( node, period, config0 ) );
 		chain.play();
 		
 		memoScaleX=node.scaleX;
@@ -169,7 +169,7 @@ public class OscilColorUtil {
 	static Dictionary<FNode, OscilColorUtil> pendings = new Dictionary<FNode, OscilColorUtil>();
 	
 	public Color memoColor;
-	public TweenChain chain=null;
+	public GoTweenChain chain=null;
 
 	public OscilColorUtil () {
 	}
@@ -178,13 +178,13 @@ public class OscilColorUtil {
 		Cancel (node);
 		
 		//Debug.Log ("OscilColorUtil node="+node);
-		chain = new TweenChain();
-		chain.setIterations( -1, LoopType.PingPong );
-		TweenConfig config0=new TweenConfig();
+		chain = new GoTweenChain(new GoTweenCollectionConfig().setIterations(-1,GoLoopType.PingPong));
+		//chain.setIterations( -1, LoopType.PingPong );
+		GoTweenConfig config0=new GoTweenConfig();
 		config0.colorProp("color",toColor);
-		config0.setEaseType(EaseType.SineInOut);
+		config0.setEaseType(GoEaseType.SineInOut);
 		
-		chain.append( new Tween( node, period, config0 ) );
+		chain.append( new GoTween( node, period, config0 ) );
 		chain.play();
 		
 		memoColor=node.color;
@@ -207,7 +207,7 @@ public class OscilAlphaUtil {
 	static Dictionary<FNode, OscilAlphaUtil> pendings = new Dictionary<FNode, OscilAlphaUtil>();
 	
 	public float memoAlpha;
-	public TweenChain chain=null;
+	public GoTweenChain chain=null;
 	
 	public OscilAlphaUtil () {
 	}
@@ -215,13 +215,13 @@ public class OscilAlphaUtil {
 	public void go(FSprite node, float period, float toAlpha  ) {
 		Cancel (node);
 		
-		chain = new TweenChain();
-		chain.setIterations( -1, LoopType.PingPong );
-		TweenConfig config0=new TweenConfig();
+		chain = new GoTweenChain(new GoTweenCollectionConfig().setIterations(-1,GoLoopType.PingPong));
+		//chain.setIterations( -1, LoopType.PingPong );
+		GoTweenConfig config0=new GoTweenConfig();
 		config0.floatProp("alpha",toAlpha);
-		config0.setEaseType(EaseType.SineInOut);
+		config0.setEaseType(GoEaseType.SineInOut);
 		
-		chain.append( new Tween( node, period, config0 ) );
+		chain.append( new GoTween( node, period, config0 ) );
 		chain.play();
 		
 		memoAlpha=node.alpha;
@@ -244,7 +244,7 @@ public class BumpUtil {
 	static Dictionary<FNode, BumpUtil> pendings = new Dictionary<FNode, BumpUtil>();
 	
 	public float memoScale;
-	public Tween tween=null;
+	public GoTween tween=null;
 	
 	public BumpUtil () {
 	}
@@ -255,13 +255,13 @@ public class BumpUtil {
 		memoScale=node.scale;
 		pendings.Add(node,this);
 		
-		TweenConfig config0=new TweenConfig().floatProp("scale",node.scale).onComplete(HandleDone);
+		GoTweenConfig config0=new GoTweenConfig().floatProp("scale",node.scale).onComplete(HandleDone);
 		node.scale*=scaleRatio;
-		config0.setEaseType(EaseType.Linear);
+		config0.setEaseType(GoEaseType.Linear);
 		tween=Go.to (node, duration, config0);
 	}
-	protected void HandleDone(AbstractTween tween) {
-		FNode node=(FNode)(((Tween)tween).target);
+	protected void HandleDone(AbstractGoTween tween) {
+		FNode node=(FNode)(((GoTween)tween).target);
 		//BumpUtil instance=null;
 		//pendings.TryGetValue(node, out instance);
 		pendings.Remove(node);
@@ -420,9 +420,9 @@ public class FxHelper {
 
 	public static FxHelper Instance { get { return instance; } }
 	
-	public void RemoveFromContainer(AbstractTween tween) {
+	public void RemoveFromContainer(AbstractGoTween tween) {
 		//Debug.Log ("RemoveFromContainer tween="+tween);
-		FNode node =(FNode)(((Tween)tween).target);
+		FNode node =(FNode)(((GoTween)tween).target);
 		node.RemoveFromContainer();
 	}
 }

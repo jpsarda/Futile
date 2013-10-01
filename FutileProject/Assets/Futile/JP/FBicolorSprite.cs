@@ -18,7 +18,7 @@ AddChild(bicolorSprite);
 
 public class FBicolorSprite : FSprite
 {
-	protected Color _bottomColor=Futile.white;
+    protected Color _bottomColor=Futile.white;
 	protected Color _topColor=Futile.white;
 
 	protected Color _bottomAlphaColor=Futile.white;
@@ -184,4 +184,3 @@ public class FBicolorSprite : FSprite
 		}
 	}
 }
-

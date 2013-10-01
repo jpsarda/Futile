@@ -186,21 +186,35 @@ public class FSpeechBubbleManager
 		return bubble;
 	}
 	
+	public void RemoveFromContainer(AbstractGoTween tween) {
+		FNode node = ((tween as GoTween).target) as FNode;
+		if (node.container!=null) {
+			node.RemoveFromContainer();
+		}
+		FSpeechBubble bubble = node as FSpeechBubble;
+		if (bubble!=null) {
+			if (bubble.nodeFollower!=null) {
+				bubble.nodeFollower.Stop();
+				bubble.nodeFollower=null;
+			}
+		}
+	}
+	
 	static public void TransitionPop(FNode node) {
 		node.scaleX=0;
 		node.scaleY=0.1f;
-		TweenConfig config0=new TweenConfig().floatProp("scaleX",1f);
-		config0.easeType=EaseType.ElasticOut;
+		GoTweenConfig config0=new GoTweenConfig().floatProp("scaleX",1f);
+		config0.easeType=GoEaseType.ElasticOut;
 		Go.to(node,0.2f,config0);
-		TweenConfig config1=new TweenConfig().floatProp("scaleY",1f);
-		config1.easeType=EaseType.ElasticOut;
+		GoTweenConfig config1=new GoTweenConfig().floatProp("scaleY",1f);
+		config1.easeType=GoEaseType.ElasticOut;
 		//config1.delay=0.15f;
 		Go.to(node,0.4f,config1);
 	}
 	
 	static public void TransitionFadeOut(FNode node,float delay) {
-		TweenConfig config=new TweenConfig().floatProp("alpha",0f).onComplete(FxHelper.Instance.RemoveFromContainer);
-		config.easeType=EaseType.ExpoOut;
+		GoTweenConfig config=new GoTweenConfig().floatProp("alpha",0f).onComplete(FSpeechBubbleManager.Instance.RemoveFromContainer);
+		config.easeType=GoEaseType.ExpoOut;
 		config.delay=delay;
 		Go.to (node,0.5f,config);
 	}

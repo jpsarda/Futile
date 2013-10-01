@@ -193,7 +193,7 @@ public class FScrollContainer : FContainer, FSingleTouchableInterface
 		CheckContentBorders();
 	}
 	
-	protected Tween _moveToAnim=null;
+	protected GoTween _moveToAnim=null;
 	//Translate content by v (animated if duration is >0)
 	virtual public bool MoveContentBy(Vector2 v,float duration) {
 		return MoveContentTo(new Vector2(_contentContainer.x+v.x,_contentContainer.y+v.y),duration);
@@ -213,8 +213,8 @@ public class FScrollContainer : FContainer, FSingleTouchableInterface
 					_moveToAnim.destroy();
 				}
 				//Debug.Log ("v="+v);
-				TweenConfig config0=new TweenConfig().floatProp("x",v.x).floatProp("y",v.y).onComplete(HandleMoveToDone);
-				config0.easeType=EaseType.ExpoOut;
+				GoTweenConfig config0=new GoTweenConfig().floatProp("x",v.x).floatProp("y",v.y).onComplete(HandleMoveToDone);
+				config0.easeType=GoEaseType.ExpoOut;
 				_moveToAnim = Go.to (_contentContainer,duration,config0);
 			} else {
 				_contentContainer.x=v.x; _contentContainer.y=v.y;
@@ -224,7 +224,7 @@ public class FScrollContainer : FContainer, FSingleTouchableInterface
 		}
 		return false;
 	}
-	virtual protected void HandleMoveToDone(AbstractTween tween) {
+	virtual protected void HandleMoveToDone(AbstractGoTween tween) {
 		_moveToAnim.destroy();
 		_moveToAnim=null;
 	}

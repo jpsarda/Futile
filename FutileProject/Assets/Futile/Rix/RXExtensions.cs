@@ -145,21 +145,15 @@ public static class RXRectExtensions
 
 public static class RXGoKitExtensions
 {
-	//this makes it so we don't have to specify false for isRelative every.single.time.
-	public static TweenConfig floatProp(this TweenConfig config, string propName, float propValue)
-	{
-		return config.floatProp(propName,propValue,false); 
-	}
-	
-	public static TweenConfig removeWhenComplete(this TweenConfig config)
+	public static GoTweenConfig removeWhenComplete(this GoTweenConfig config)
 	{
 		config.onComplete(HandleRemoveWhenDoneTweenComplete);	
 		return config;
 	}
 	
-	private static void HandleRemoveWhenDoneTweenComplete (AbstractTween tween)
+	private static void HandleRemoveWhenDoneTweenComplete (AbstractGoTween tween)
 	{
-		((tween as Tween).target as FNode).RemoveFromContainer();
+		((tween as GoTween).target as FNode).RemoveFromContainer();
 	}
 }
 

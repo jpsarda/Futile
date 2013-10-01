@@ -57,7 +57,7 @@ public class ListDelayedActions<T>
 		if (startingDelay<=0f) {
 			NextAction();
 		} else {
-			TweenConfig config0=new TweenConfig().floatProp("dummy",0).onComplete(HandleWaitComplete);
+			GoTweenConfig config0=new GoTweenConfig().floatProp("dummy",0).onComplete(HandleWaitComplete);
 			Go.to (this, startingDelay, config0);
 			//Futile.instance.StartDelayedCallback(NextAction,startingDelay);
 		}
@@ -75,13 +75,13 @@ public class ListDelayedActions<T>
 			
 			_index++;
 			
-			TweenConfig config0=new TweenConfig().floatProp("dummy",0).onComplete(HandleWaitComplete);
+			GoTweenConfig config0=new GoTweenConfig().floatProp("dummy",0).onComplete(HandleWaitComplete);
 			Go.to (this, _delay+RXRandom.Range(-1,1)*_delayVariance, config0);
 			//Futile.instance.StartDelayedCallback(NextAction,_delay+RXRandom.Range(-1,1)*_delayVariance);
 		}
 	}
 
-	protected void HandleWaitComplete(AbstractTween tween) { NextAction(); }
+	protected void HandleWaitComplete(AbstractGoTween tween) { NextAction(); }
 }
 
 

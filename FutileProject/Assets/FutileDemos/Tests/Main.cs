@@ -20,8 +20,8 @@ public class Main : MonoBehaviour
 	{
 		instance = this; 
 		
-		Go.defaultEaseType = EaseType.Linear;
-		Go.duplicatePropertyRule = DuplicatePropertyRuleType.RemoveRunningProperty;
+		Go.defaultEaseType = GoEaseType.Linear;
+		Go.duplicatePropertyRule = GoDuplicatePropertyRuleType.RemoveRunningProperty;
 		
 		//Time.timeScale = 0.1f;
 		
@@ -77,23 +77,23 @@ public class Main : MonoBehaviour
 		fadeSprite.alpha=0f;
 		_stage.AddChild(fadeSprite);
 		
-		TweenConfig config0=new TweenConfig().floatProp("alpha",1f).onComplete(MiddleTransition);
+		GoTweenConfig config0=new GoTweenConfig().floatProp("alpha",1f).onComplete(MiddleTransition);
 		
-		config0.setEaseType(EaseType.Linear);
+		config0.setEaseType(GoEaseType.Linear);
 		//config0.setEaseType(EaseType.ExpoIn);
 		//config0.setEaseType(EaseType.ElasticIn);
 		Go.to (fadeSprite, duration*0.5f, config0);
 	}
-	protected void MiddleTransition(AbstractTween tween) {
+	protected void MiddleTransition(AbstractGoTween tween) {
 		GoToPage(_transitionPageType,true);
 		_transitionPageType = PageType.None;
 		
-		FSprite fadeSprite=(FSprite)(((Tween)tween).target);
+		FSprite fadeSprite=(FSprite)(((GoTween)tween).target);
 		fadeSprite.RemoveFromContainer();
 		_stage.AddChild(fadeSprite);
 		
-		TweenConfig config0=new TweenConfig().floatProp("alpha",0f).onComplete(FxHelper.Instance.RemoveFromContainer);
-		config0.setEaseType(EaseType.Linear);
+		GoTweenConfig config0=new GoTweenConfig().floatProp("alpha",0f).onComplete(FxHelper.Instance.RemoveFromContainer);
+		config0.setEaseType(GoEaseType.Linear);
 		//config0.setEaseType(EaseType.ExpoOut);
 		//config0.setEaseType(EaseType.ElasticIn);
 		Go.to(fadeSprite, tween.duration, config0);
