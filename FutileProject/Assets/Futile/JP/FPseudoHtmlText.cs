@@ -35,6 +35,7 @@ public enum PseudoHtmlTextAlign : int
 }
 
 
+//An piece of line to be rendered with dimensions (can be a piece of text (label) or a sprite, a button or whatever node tag you implementin the html code)
 public class LinePiece {
 	public FNode node;
 	public float height,width;
@@ -42,8 +43,34 @@ public class LinePiece {
 		node=node_;
 		width=width_;
 		height=height_;
+		charCount=1;
 	}
+	
+	public LinePiece(FLabel node_,float width_,float height_) {
+		node=node_;
+		width=width_;
+		height=height_;
+		charCount=node_.text.Length;
+	}
+	
+	public void SetVisibleStartEnd(int start,int end) {
+		if (start>=charCount) {
+			node.isVisible=false;
+		} else if (end<=0) {
+			node.isVisible=false;
+		} else {
+			node.isVisible=true;
+			FLabelAnimate label=node as FLabelAnimate;
+			if (label!=null) {
+				label.startVisibleCharIdx=start;
+				label.endVisibleCharIdx=end;
+			}
+		}
+	}
+	
+	public int charCount=0;
 }
+
 
 
 public class FPseudoHtmlText : FContainer
@@ -57,6 +84,34 @@ public class FPseudoHtmlText : FContainer
 	protected float _lineOffset;
 	protected object _actionsDelegate;
 	protected Dictionary<FButton,string> _buttonActions;
+	
+	
+	
+	//animate
+	protected int _startVisibleCharIdx=0; //idx included
+	protected int _endVisibleCharIdx=0; //idx excluded, when is equal to 0, nothing is shown
+	protected int _charCount=0;
+	public int charCount { get { return _charCount; } }
+	public int startVisibleCharIdx { 
+		get { return _startVisibleCharIdx; }
+		set {
+			if (value!=_startVisibleCharIdx) {
+				_startVisibleCharIdx=value;
+				UpdateCharsVisibility();
+			}	
+		}
+	}
+	public int endVisibleCharIdx { 
+		get { return _endVisibleCharIdx; }
+		set {
+			if (value!=_endVisibleCharIdx) {
+				_endVisibleCharIdx=value;
+				UpdateCharsVisibility();
+			}	
+		}
+	}
+	protected List<List<LinePiece>> _lines;
+		
 	
 	
 	
@@ -128,6 +183,8 @@ public class FPseudoHtmlText : FContainer
 		_line=null;
 		_textNotRendered=null;
 		_parsingY=0;
+		_charCount=0;
+		_lines=new List<List<LinePiece>>();
 		
 		bool lineSplit=false; //set to true when, for example, a style is changed and requires the line to be split in several pieces
 		HtmlTag tag;
@@ -235,6 +292,10 @@ public class FPseudoHtmlText : FContainer
 		_contentContainer.y=-_parsingY*0.5f;
 		_width=_maxWidth;
 		_height=-_parsingY;
+		
+		//All visible
+		_startVisibleCharIdx=0;
+		_endVisibleCharIdx=_charCount; 
 	}
 
 	protected float LineWidth() {
@@ -289,10 +350,23 @@ public class FPseudoHtmlText : FContainer
 			}
 			
 			_parsingY-=(maxHeight+_lineOffset)*0.5f;
+			
+			_lines.Add(line);
 		}
 	}
 	
 	
+	
+	protected void UpdateCharsVisibility() {
+		int charIdx=0;
+		//int pieceCharIdx=0;
+		foreach (List<LinePiece> line in _lines) {
+			foreach (LinePiece piece in line) {
+				piece.SetVisibleStartEnd(_startVisibleCharIdx-charIdx,_endVisibleCharIdx-charIdx);
+				charIdx+=piece.charCount;	
+			}
+		}
+	}
 	
 	
 	
@@ -316,13 +390,6 @@ public class FPseudoHtmlText : FContainer
 		}
 		return Futile.white;
 	}
-	
-	
-	
-	
-	
-	
-	
 	
 	protected void SetNodeScale(FNode node, Vector2 originalSize , Dictionary<string,string> attributes) {
 		node.scale=1;
@@ -569,21 +636,26 @@ public class FPseudoHtmlText : FContainer
 		if (_line==null) {
 			_line=new List<LinePiece>();
 		}
-		_line.Add(piece);
+		AddPiece(piece);
 	}
 	
 	protected void RenderPiece(string text) {
 		if (text==null) return;
 		//if (text.Length==0) return;
 		
-		FLabel label=new FLabel(_fontName,text+" "); //because FLabel rip the last space only, here we want the last space to take some real space
+		FLabelAnimate label=new FLabelAnimate(_fontName,text+" ",true); //because FLabel rip the last space only, here we want the last space to take some real space
 
 		ApplyStyles(label);
 		
 		if (_line==null) {
 			_line=new List<LinePiece>();
 		}
-		_line.Add(new LinePiece(label,label.textRect.width*label.scaleX,(label.textRect.height+_textParams.lineHeightOffset)*label.scaleY));
+		AddPiece(new LinePiece(label,label.textRect.width*label.scaleX,(label.textRect.height+_textParams.lineHeightOffset)*label.scaleY));
+	}
+	
+	protected void AddPiece(LinePiece piece) {
+		_line.Add(piece);
+		_charCount+=piece.charCount;
 	}
 	
 	protected void Render(int toPos, bool split) {
@@ -602,6 +674,7 @@ public class FPseudoHtmlText : FContainer
 				int bestBadPos=_textNotRendered.Length;
 				int endPos=bestBadPos;
 				
+				//Label used for size estimations
 				FLabel label=new FLabel(_fontName,_textNotRendered);
 				ApplyStyles(label);
 

@@ -26,7 +26,7 @@ public class PageTestGoKit : PageTest, FMultiTouchableInterface
 	protected List<GoTween> _spriteAnims=null;
 	override public void Start()
 	{
-		ShowTitle("GoKit extensions\nClick to start animations");
+		ShowTitle("GoKit Shake and Oscillate");
 		
 		_sprites=new List<FSprite>();
 		_spriteAnims=new List<GoTween>();
@@ -52,6 +52,8 @@ public class PageTestGoKit : PageTest, FMultiTouchableInterface
 
 		
 		base.Start();
+		
+		TempMessage("Click to start",2f);
 	}
 	
 	protected GoTween StartRandomAnim(FSprite sprite) {

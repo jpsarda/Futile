@@ -8,6 +8,7 @@ using System.IO;
 public enum PageType
 {
 	None,
+	PageTestLabelAnimate,
 	PageTestGoKit,
 	PageTestMotionStreak,
 	PageTestDelayedActions,
@@ -53,7 +54,7 @@ public class PageTest : Page
 			_titleLabelBg.alpha=0.5f;
 			_titleLabel=new FLabel(Config.fontFile,title,Config.textParams);
 			AddChild(_titleLabel);
-			_titleLabel.scale=0.75f;
+			_titleLabel.scale=0.5f;
 		} else {
 			_titleLabel.text=title;
 		}
