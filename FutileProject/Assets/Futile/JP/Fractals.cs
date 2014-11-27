@@ -18,6 +18,7 @@ public class FractalElement : FContainer
 {
 	protected List<FractalElement> _elements;
 	protected float _size;
+	protected float _spriteScaleRatio;
 	
 	public float angle;
 	public float radius,dynamicRadius;
@@ -28,12 +29,19 @@ public class FractalElement : FContainer
 	
 	protected int _maxChaincount;
 	protected bool _root;
+
+	FAtlasElement _atlasElement;
 		
-	public FractalElement (float size,bool root,int maxChainCount)
+	public FractalElement(float size,bool root,int maxChainCount,FAtlasElement atlasElement=null,float spriteScaleRatio=1f)
 	{
 		_size=size;
 		_root=root;
+		_spriteScaleRatio=spriteScaleRatio;
 		_maxChaincount=maxChainCount;
+		_atlasElement=atlasElement;
+		if (_atlasElement==null) {
+			_atlasElement=Futile.atlasManager.GetElementWithName("Futile_White");
+		}
 		_elements=new List<FractalElement>();
 		
 		Build();
@@ -55,7 +63,7 @@ public class FractalElement : FContainer
 	}
 	
 	public void Build() {
-		sprite=new FSprite("Futile_White");
+		sprite=new FSprite(_atlasElement);
 		//sprite=new FSprite("Banana");
 		//sprite=new FSprite("pskystar");
 		//sprite=new FSprite("pspiral");
@@ -89,7 +97,7 @@ public class FractalElement : FContainer
 				count=RXRandom.Range(0,8);
 			}
 			for (int i=0;i<count;i++) {
-				FractalElement element=new FractalElement(_size*RXRandom.Range(0.55f,0.85f),false,_maxChaincount-1);
+				FractalElement element=new FractalElement(_size*RXRandom.Range(0.55f,0.85f),false,_maxChaincount-1,_atlasElement,_spriteScaleRatio);
 				AddChild(element);
 				element.angle=RXRandom.Float(Mathf.PI*2);
 				element.dynamicRadius=element.radius=_size;
@@ -119,7 +127,7 @@ public class FractalElement : FContainer
 		}
 
 		elementsRotationSpeed=RXRandom.Range(-10f,10f);
-		sprite.scale=_size*0.95f/sprite.textureRect.width;
+		sprite.scale=_spriteScaleRatio*_size*0.95f/sprite.textureRect.width;
 		foreach (FractalElement element in _elements) {
 			element.SetRandomParams();
 		}

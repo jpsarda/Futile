@@ -47,6 +47,7 @@ public class Main : MonoBehaviour
 		Futile.instance.Init (fparams);
 		
 		Futile.atlasManager.LoadAtlas("Atlases/BananaGameAtlas");
+		Futile.atlasManager.LoadAtlas("Atlases/atlas0");
 		Futile.atlasManager.LoadFont(Config.fontFile,Config.fontFile+Futile.resourceSuffix, "Atlases/"+Config.fontFile+Futile.resourceSuffix, 0.0f,-4.0f);
 		
 		_stage = Futile.stage;

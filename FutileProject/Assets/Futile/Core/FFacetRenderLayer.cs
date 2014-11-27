@@ -7,11 +7,11 @@ public class FFacetRenderLayer : FRenderableLayerInterface
 {
 	public int batchIndex;
 	
-	protected FStage _stage;
+	public FStage stage;
 	
-	protected FFacetType _facetType;
-	protected FAtlas _atlas;
-	protected FShader _shader;
+	public FFacetType facetType;
+	public FAtlas atlas;
+	public FShader shader;
 	
 	protected GameObject _gameObject;
 	protected Transform _transform;
@@ -44,18 +44,19 @@ public class FFacetRenderLayer : FRenderableLayerInterface
 
 	public FFacetRenderLayer (FStage stage, FFacetType facetType, FAtlas atlas, FShader shader)
 	{
-		_stage = stage;
+		this.stage = stage;
 		
-		_facetType = facetType;
-		_atlas = atlas;
-		_shader = shader;
+		this.facetType = facetType;
+		this.atlas = atlas;
+		this.shader = shader;
 		
-		_expansionAmount = _facetType.expansionAmount;
-		_maxEmptyFacets = _facetType.maxEmptyAmount;
+		_expansionAmount = facetType.expansionAmount;
+		_maxEmptyFacets = facetType.maxEmptyAmount;
 		
-		batchIndex = _facetType.index*10000000 + atlas.index*10000 + shader.index;
+		this.batchIndex = facetType.index*10000000 + atlas.index*10000;
+
 		
-		_gameObject = new GameObject("FRenderLayer ("+_stage.name+") ("+_facetType.name+")");
+		_gameObject = new GameObject("FRenderLayer ("+stage.name+") ("+facetType.name+")");
 		_transform = _gameObject.transform;
 		
 		_transform.parent = Futile.instance.gameObject.transform;
@@ -67,10 +68,11 @@ public class FFacetRenderLayer : FRenderableLayerInterface
 		
 		_mesh = _meshFilter.mesh;
 		
-		_material = new Material(_shader.shader);
-		_material.mainTexture = _atlas.texture;
-		
-		_meshRenderer.renderer.material = _material;
+		_material = new Material(shader.shader);
+		_material.mainTexture = atlas.texture;
+
+		_meshRenderer.renderer.sharedMaterial = _material;
+		//_meshRenderer.renderer.material = _material;
 		
 		#if UNITY_3_0 || UNITY_3_1 || UNITY_3_2 || UNITY_3_3 || UNITY_3_4 || UNITY_3_5
 			_gameObject.active = false;
@@ -79,7 +81,7 @@ public class FFacetRenderLayer : FRenderableLayerInterface
 			_mesh.MarkDynamic();
 		#endif
 		
-		ExpandMaxFacetLimit(_facetType.initialAmount);
+		ExpandMaxFacetLimit(facetType.initialAmount);
 		
 		UpdateTransform();
 	}
@@ -87,15 +89,17 @@ public class FFacetRenderLayer : FRenderableLayerInterface
 	public void Destroy()
 	{
 		UnityEngine.Object.Destroy(_gameObject);
+		UnityEngine.Object.Destroy(_mesh);
+		UnityEngine.Object.Destroy(_material);
 	}
 
 	public void UpdateTransform()
 	{
-		_transform.position = _stage.transform.position;
-		_transform.rotation = _stage.transform.rotation;
-		_transform.localScale = _stage.transform.localScale;
+		_transform.position = stage.transform.position;
+		_transform.rotation = stage.transform.rotation;
+		_transform.localScale = stage.transform.localScale;
 
-        _gameObject.layer = _stage.layer;
+        _gameObject.layer = stage.layer;
 	}
 	
 	public void AddToWorld () //add to the transform etc
@@ -116,7 +120,7 @@ public class FFacetRenderLayer : FRenderableLayerInterface
 		#endif
 		#if UNITY_EDITOR
 			//some debug code so that layers are sorted by depth properly
-			_gameObject.name = "FRenderLayer X ("+_stage.name+") (" + _atlas.name + " " + _shader.name+" "+_facetType.name+ ")";
+			_gameObject.name = "FRenderLayer X ("+stage.name+") (" + atlas.name + " " + shader.name+" "+facetType.name+ ")";
 		#endif
 	}
 
@@ -153,7 +157,7 @@ public class FFacetRenderLayer : FRenderableLayerInterface
 		
 		#if UNITY_EDITOR
 			//some debug code so that layers are sorted by depth properly
-			_gameObject.name = "FRenderLayer "+_depth+" ("+_stage.name+") ["+_nextAvailableFacetIndex+"/"+_maxFacetCount+"] (" + _atlas.name + " " + _shader.name+" "+_facetType.name+ ")";
+			_gameObject.name = "FRenderLayer "+_depth+" ("+stage.name+") ["+_nextAvailableFacetIndex+"/"+_maxFacetCount+"] (" + atlas.name + " " + shader.name+" "+facetType.name+ ")";
 		#endif
 	}
 
@@ -185,7 +189,7 @@ public class FFacetRenderLayer : FRenderableLayerInterface
 			
 			#if UNITY_EDITOR
 				//some debug code so that layers are sorted by depth properly
-				_gameObject.name = "FRenderLayer "+_depth+" ("+_stage.name+") ["+_nextAvailableFacetIndex+"/"+_maxFacetCount+"] (" + _atlas.name + " " + _shader.name+" "+_facetType.name+ ")";
+				_gameObject.name = "FRenderLayer "+_depth+" ("+stage.name+") ["+_nextAvailableFacetIndex+"/"+_maxFacetCount+"] (" + atlas.name + " " + shader.name+" "+facetType.name+ ")";
 			#endif
 		}
 		
@@ -193,8 +197,17 @@ public class FFacetRenderLayer : FRenderableLayerInterface
 		{
 			UpdateMeshProperties();
 		}
+		if(shader.needsApply)
+		{
+			shader.Apply(_material);
+		}
 	}
 	
+	virtual public void PostUpdate()
+	{
+		shader.needsApply = false;
+	}
+
 	protected void UpdateMeshProperties()
 	{
 		_isMeshDirty = false;
@@ -307,7 +320,7 @@ public class FQuadRenderLayer : FFacetRenderLayer
 	{
 		if(deltaDecrease <= 0) return;
 		
-		_maxFacetCount = Math.Max (_facetType.initialAmount, _maxFacetCount-deltaDecrease);
+		_maxFacetCount = Math.Max (facetType.initialAmount, _maxFacetCount-deltaDecrease);
 	
 		//shrink the arrays
 		Array.Resize (ref _vertices,_maxFacetCount*4);
@@ -391,7 +404,7 @@ public class FTriangleRenderLayer : FFacetRenderLayer
 	{
 		if(deltaDecrease <= 0) return;
 		
-		_maxFacetCount = Math.Max (_facetType.initialAmount, _maxFacetCount-deltaDecrease);
+		_maxFacetCount = Math.Max (facetType.initialAmount, _maxFacetCount-deltaDecrease);
 	
 		//shrink the arrays
 		Array.Resize (ref _vertices,_maxFacetCount*3);

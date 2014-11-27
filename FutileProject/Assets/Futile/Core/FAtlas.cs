@@ -13,6 +13,7 @@ public class FAtlasElement
 	public int atlasIndex;
 	
 	public Rect uvRect;
+	public Rect frame;
 	public Vector2 uvTopLeft;
 	public Vector2 uvTopRight;
 	public Vector2 uvBottomRight;
@@ -36,6 +37,7 @@ public class FAtlasElement
 		element.atlasIndex = atlasIndex;
 		
 		element.uvRect = uvRect;
+		element.frame = frame;
 		element.uvTopLeft = uvTopLeft;
 		element.uvTopRight = uvTopRight;
 		element.uvBottomRight = uvBottomRight;
@@ -186,6 +188,8 @@ public class FAtlas
 			float frameY = float.Parse(frame["y"].ToString());
 			float frameW = float.Parse(frame["w"].ToString());
 			float frameH = float.Parse(frame["h"].ToString()); 
+
+			element.frame=new Rect(frameX,frameY,frameW,frameH);
 			
 			Rect uvRect = new Rect
 			(

@@ -43,7 +43,7 @@ public class PageTestFractals : PageTest, FMultiTouchableInterface
 		
 		button.x=Futile.screen.halfWidth-button.hitRect.width*button.scaleX*0.5f;
 		button.y=Futile.screen.halfHeight-button.hitRect.height*button.scaleY*0.5f;
-		Futile.stage.AddChild(button);
+		this.AddChild(button);
 		
 		button.SignalRelease+=HandleNewButtonRelease;
 	}
@@ -55,7 +55,7 @@ public class PageTestFractals : PageTest, FMultiTouchableInterface
 	protected FractalElement _f=null;
 	protected void newOne() {
 		if (_f!=null) _f.RemoveFromContainer();
-		_f = new FractalElement(40f,true,4);
+		_f = new FractalElement(40f,true,4,Futile.atlasManager.GetElementWithName("psmoke0"),3f);
 		Color c=RandomUtils.RandomColor();
 		c.a=RXRandom.Range(0.25f,0.75f);
 		_f.SetColor(c);

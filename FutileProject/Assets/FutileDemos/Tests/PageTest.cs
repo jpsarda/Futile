@@ -8,6 +8,8 @@ using System.IO;
 public enum PageType
 {
 	None,
+	PageTestPostProcessing,
+	PageTestHole,
 	PageTestFractals,
 	PageTestLabelAnimate,
 	PageTestGoKit,

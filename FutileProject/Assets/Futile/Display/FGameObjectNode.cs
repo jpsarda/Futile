@@ -130,7 +130,11 @@ public class FGameObjectNode : FNode, FRenderableLayerInterface
 			_gameObject.renderer.material.renderQueue = _renderQueueDepth;
 		}
 	}
-	
+
+	virtual public void PostUpdate()
+	{
+		
+	}
 	public void UpdateGameObject()
 	{
 		if(_isOnStage) 
